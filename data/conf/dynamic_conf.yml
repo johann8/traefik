@@ -1,0 +1,91 @@
+# TLS option
+# ---
+tls:
+  options:
+    # To use with the label "traefik.http.routers.myrouter.tls.options=modern@file"
+    modern:
+      minVersion: VersionTLS12
+      cipherSuites:
+        - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
+        - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
+      curvePreferences:
+        - CurveP521
+        - CurveP384
+      sniStrict: false                                  # true - if certificates are issued to the FQDN
+
+# http routing section
+# ---
+http:
+  middlewares:
+
+    # A basic authentification middleware, to protect the Traefik dashboard to anyone except myself
+    # Use with traefik.http.routers.myRouter.middlewares: "traefik-auth@file"
+    traefik-auth:
+      basicAuth:
+        users:
+          - "user:HashedPassword"                       # create pw: htpasswd -nB user
+        realm: "Traefik dashboard on OracleL8"
+
+    # Recommended default middleware for most of the services
+    # Use with traefik.http.routers.myRouter.middlewares: "default-chain@file"
+    # Equivalent of traefik.http.routers.myRouter.middlewares: "secHeaders@file,gzip@file"
+    default-chain:
+      chain:
+        middlewares:
+          - secHeaders
+          - gzip
+
+    # Use with traefik.http.routers.myRouter.middlewares: "gzip@file"
+    gzip:
+      compress: {}
+
+    # Use with traefik.http.routers.myRouter.middlewares: "default-whitelist@file"
+    default-whitelist:
+      ipWhiteList:
+        sourceRange:
+          - "10.0.0.0/8"
+          - "192.168.0.0/16"
+          - "172.0.0.0/12"
+
+    # Use with traefik.http.routers.myRouter.middlewares: "rate-limit@file"
+    rate-limit:
+      rateLimit:
+        average: 100                             # an average of 100 requests per second is allowed
+        period: 10s                              # Period is in s oder m: 100 requests per 10 second is allowed
+        burst: 50                                # a burst (max) of 50 requests is allowed
+
+#    # for ocs
+#    ocs-addprefix-ocsreports:
+#      addPrefix:
+#        prefix: "/ocsreports"
+
+    # Use with traefik.http.routers.myRouter.middlewares: "secHeaderst@file"
+    secHeaders:
+      headers:
+        browserXssFilter: true
+        contentTypeNosniff: true
+        forceSTSHeader: true                     # Add the Strict-Transport-Security header even when the connection is HTTP
+        frameDeny: true                          # X-Frame-Options=deny
+        # HSTS Configuration
+        stsIncludeSubdomains: true               # Add includeSubdomains to the Strict-Transport-Security header
+        stsPreload: true                         # Add preload flag appended to the Strict-Transport-Security header
+        stsSeconds: 31536000                     # Set the max-age of the Strict-Transport-Security header (31536000 = 1 year)
+        customFrameOptionsValue: "SAMEORIGIN"
+        customRequestHeaders:
+          X-Forwarded-Proto: https
+
+     # Use with traefik.http.routers.myRouter.middlewares: "authelia@file"
+#    authelia:
+#      forwardAuth:
+#        address: "http://authelia:9091/api/verify?rd=https://auth.mydomain.de"
+#        trustForwardHeader: true
+#        authResponseHeaders:
+#          - "Remote-User"
+#          - "Remote-Groups"
+#          - "Remote-Name"
+#          - "Remote-Email"
+
