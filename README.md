@@ -19,7 +19,11 @@ tree -d -L 3 ${DOCKERDIR}
 ```bash
 DOCKERDIR=/opt/traefik
 cd ${DOCKERDIR}
-wget 
+wget https://raw.githubusercontent.com/johann8/traefik/master/.env
+wget https://raw.githubusercontent.com/johann8/traefik/master/docker-compose.yml
+wget https://raw.githubusercontent.com/johann8/traefik/master/data/conf/dynamic_conf.yml
+wget https://raw.githubusercontent.com/johann8/traefik/master/data/conf/traefik.yml
+mv dynamic_conf.yml traefik.yml data/conf/
 ```
 
 - Generate password
