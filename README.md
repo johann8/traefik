@@ -4,13 +4,13 @@
 <a href="https://traefik.io)">Traefik</a> is a modern HTTP reverse proxy (RP) and load balancer that makes deploying microservices easy.
 </p>
 
-## Install traefik
+## Install traefik 🐋
 - Create folders
 ```bash
 DOCKERDIR=/opt/traefik
-mkdir -p ${DOCKERDIR}/data/{certs,conf,logs}
-touch /opt/traefik/data/conf/acme.json
-chmod 600 /opt/traefik/data/conf/acme.json
+mkdir -p ${DOCKERDIR}/data/{certs,config,logs}
+touch ${DOCKERDIR}/data/config/acme.json
+chmod 600 ${DOCKERDIR}/data/config/acme.json
 cd ${DOCKERDIR}
 tree -d -L 3 ${DOCKERDIR}
 ```
@@ -21,9 +21,9 @@ DOCKERDIR=/opt/traefik
 cd ${DOCKERDIR}
 wget https://raw.githubusercontent.com/johann8/traefik/master/.env
 wget https://raw.githubusercontent.com/johann8/traefik/master/docker-compose.yml
-wget https://raw.githubusercontent.com/johann8/traefik/master/data/conf/dynamic_conf.yml
-wget https://raw.githubusercontent.com/johann8/traefik/master/data/conf/traefik.yml
-mv dynamic_conf.yml traefik.yml data/conf/
+wget https://raw.githubusercontent.com/johann8/traefik/master/assets/config/traefik.yml -P data/conf/
+wget https://raw.githubusercontent.com/johann8/traefik/master/assets/config/dynamic_conf.yml -P data/conf/
+
 ```
 
 - Generate password
@@ -38,11 +38,11 @@ echo $(htpasswd -nb ${USER_NAME} ${TRAEFIK_PASSWORD}) | sed -e s/\\$/\\$\\$/g
 # user1:$$apr1$$ht6O3iSE$$5YxApoPCqeGyMNRsCvXwh/
 ```
 
-- Set password and user into
+- Set password and user into `dynamic_conf.yml`
 ```bash
 DOCKERDIR=/opt/traefik
 cd ${DOCKERDIR}
-vi data/conf/dynamic_conf.yml
+vi data/config/dynamic_conf.yml
 --------
 ...
     traefik-auth:
@@ -53,7 +53,7 @@ vi data/conf/dynamic_conf.yml
 --------
 ```
 
-- Customize "docker-compose.yml" and ".env" unsd launch docker container
+- Customize `docker-compose.yml` and `.env` and launch docker container
 ```bash
 DOCKERDIR=/opt/traefik
 cd ${DOCKERDIR}
@@ -65,4 +65,5 @@ docker-compose up -d
 docker-compose ps
 docker-compose logs
 ```
+
 Enjoy !
