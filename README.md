@@ -1,7 +1,7 @@
 <h1 align="center">TRAEFIK - Reverse Proxy</h1>
 
 <p align='justify'>
-<a href="https://traefik.io)">Traefik</a> is a modern HTTP reverse proxy (RP) and load balancer that makes deploying microservices easy.
+<a href="https://traefik.io">Traefik</a> is a modern HTTP reverse proxy (RP) and load balancer that makes deploying microservices easy.
 </p>
 
 ## Install traefik 🐋
