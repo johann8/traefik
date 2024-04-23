@@ -68,6 +68,7 @@ docker-compose logs
 
 - Rotate traefik log file
 ```bash
+# create logrotate file
 cat > /etc/logrotate.d/traefik << 'EOL'
 /opt/traefik/data/logs/*.log {
   weekly
