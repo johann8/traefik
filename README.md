@@ -42,7 +42,7 @@ echo $(htpasswd -nb ${USER_NAME} ${TRAEFIK_PASSWORD}) | sed -e s/\\$/\\$\\$/g
 ```bash
 DOCKERDIR=/opt/traefik
 cd ${DOCKERDIR}
-vi data/config/dynamic_conf.yml
+vim data/config/dynamic_conf.yml
 --------
 ...
     traefik-auth:
@@ -57,13 +57,36 @@ vi data/config/dynamic_conf.yml
 ```bash
 DOCKERDIR=/opt/traefik
 cd ${DOCKERDIR}
-vi .env
-vi docker-compose.yml
+vim .env
+vim docker-compose.yml
 
 docker-compose up -d
 
 docker-compose ps
 docker-compose logs
+```
+
+- Rotate traefik log file
+```bash
+cat > /etc/logrotate.d/traefik << 'EOL'
+/opt/traefik/data/logs/*.log {
+  weekly
+  rotate 5
+  compress
+  #size=1M
+  missingok
+  notifempty  
+  postrotate
+    docker kill --signal="USR1" traefik
+  endscript
+}
+EOL
+ls -la /etc/logrotate.d/
+ls -lah /opt/traefik/data/logs/
+
+# Run logrotate manuell
+logrotate --force /etc/logrotate.d/traefik
+ls -lah /opt/traefik/data/logs/
 ```
 
 Enjoy !
